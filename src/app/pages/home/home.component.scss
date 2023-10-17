@@ -1,0 +1,10 @@
+.page-item {
+  cursor: pointer;
+}
+
+.absolute-center {
+  translate: -50% -50%;
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+}

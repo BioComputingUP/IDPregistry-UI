@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,0BAA0B;EACxB,aAAa,EAAC,CAAC;;AAGjB,SAAU;EACR,aAAa,EAAE,CAAC",
+"sources": ["protein-row.component.scss"],
+"names": [],
+"file": "protein-row.component.css"
+}

@@ -1,0 +1,65 @@
+<div class="card">
+  <h5 class="card-header">
+    {{protein.name}}
+    -
+    <a [href]="protein.uniprotUri">{{protein.uniprotId}}</a>
+  </h5>
+  <div class="card-body">
+    <h6 class="card-title">
+      {{protein.organismName}}
+      <a [href]="protein.taxonomyUri" target="_blank">
+        <span class="badge bg-secondary text-dark me-2">Taxon {{protein.taxonomyNumber}}</span>
+      </a>
+    </h6>
+
+    <table class="table bg-secondary" id="registry">
+      <thead class="bg-secondary">
+      <tr class="bg-secondary">
+        <th scope="col">Resource</th>
+        <th scope="col">Entity ID</th>
+        <th scope="col">Sequence range</th>
+        <th scope="col">Sequence annotation</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngFor="let source of protein.externalSources">
+        <ng-container *ngFor="let annotation of source.annotations; index as i">
+          <ng-container *ngIf="i == 0">
+            <tr>
+              <td class="col-2">{{source.sourceName}}</td>
+              <td class="col-2">
+                <a [href]="source.getUri()" target="_blank">
+                  {{source.sourceId}}
+                </a>
+              </td>
+              <td class="col-2">{{annotation.start}} - {{annotation.end}}</td>
+              <ng-container *ngTemplateOutlet="termsBadge;context:{annotation: annotation}"></ng-container>
+            </tr>
+          </ng-container>
+          <ng-container *ngIf="i > 0">
+            <tr>
+              <td class="col-2"></td>
+              <td class="col-2"></td>
+              <td class="col-2">{{annotation.start}} - {{annotation.end}}</td>
+              <ng-container *ngTemplateOutlet="termsBadge;context:{annotation: annotation}"></ng-container>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<ng-template #termsBadge let-annotation="annotation">
+  <td class="col-6">
+    <ng-container *ngFor="let term of annotation.terms">
+      <ng-container *ngIf="asTerm(term) as term">
+        <a [href]="term.getUri()" target="_blank">
+          <span class="badge bg-primary me-2">{{term.name}} - {{term.code}}</span>
+        </a>
+      </ng-container>
+    </ng-container>
+  </td>
+</ng-template>
