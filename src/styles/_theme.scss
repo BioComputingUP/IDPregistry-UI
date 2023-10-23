@@ -6,5 +6,12 @@
 $primary: #FF5035; // set the $primary variable
 $secondary: #C7D8C6; // set the $secondary variable
 $min-contrast-ratio: 3; // set the min contrast ratio to 3
+$spacer: 1rem; // set the default spacer to 1rem (default is 1rem)
+$body-color: #545454; // set the default text color to #333 (default is #212529)
 
 @import 'bootstrap/scss/bootstrap.scss';
+
+//@import 'codemirror/lib/codemirror';
+//@import 'codemirror/addon/fold/foldgutter.css';
+//@import 'codemirror/theme/material';
+//@import 'codemirror/addon/hint/show-hint.css';

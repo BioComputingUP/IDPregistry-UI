@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEI,mEAAwB;EACtB,UAAU,EAAE,KAAK;AAGnB,iCAAY;EACV,MAAM,EAAE,CAAC;AAGX,kCAAa;EACX,QAAQ,EAAE,IAAI;AAGhB,8BAAS;EACP,MAAM,EAAE,gBACV;AAEA,iCAAY;EACV,gBAAgB,EAAE,SAAS",
+"sources": ["sparql-editor.component.scss"],
+"names": [],
+"file": "sparql-editor.component.css"
+}

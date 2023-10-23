@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HomeComponent } from './home.component';
+import { SparqlComponent } from './sparql.component';
 
-describe('HomeComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('SparqlComponent', () => {
+  let component: SparqlComponent;
+  let fixture: ComponentFixture<SparqlComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations : [HomeComponent],
+      declarations : [SparqlComponent],
     });
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(SparqlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

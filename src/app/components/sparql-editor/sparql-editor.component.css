@@ -1,0 +1,21 @@
+::ng-deep #codemirror .cm-content, ::ng-deep #codemirror .cm-gutter {
+    min-height: 250px;
+}
+
+::ng-deep #codemirror .cm-gutters {
+    margin: 0;
+}
+
+::ng-deep #codemirror .cm-scroller {
+    overflow: auto;
+}
+
+::ng-deep #codemirror .cm-wrap {
+    border: 1px solid silver;
+}
+
+::ng-deep #codemirror .cm-content {
+    background-color: #8495bb12;
+}
+
+/*# sourceMappingURL=sparql-editor.component.css.map */

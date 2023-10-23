@@ -35,7 +35,7 @@ html, body {
 
 // Apply the fade animation on hover and when hover is lifted
 $animation-duration: 0.2s;
-$animation-easing: cubic-bezier(.97,.29,.55,.95);
+$animation-easing: cubic-bezier(.97, .29, .55, .95);
 $hover-gradient: linear-gradient(to left, #00000000 0%, rgba($primary, 0.25) 50%, #00000000 100%);
 
 .hover-gradient {

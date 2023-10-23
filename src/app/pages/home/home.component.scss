@@ -8,3 +8,31 @@
   top: 50%;
   left: 50%;
 }
+
+.graphdb {
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/b2/Ontotext_GraphDB_Logo.png');
+  background-size: contain;
+  background-position: center;
+  background-color: white;
+  color: #434449;
+  font-size: 0;
+  height: 38px;
+}
+
+.virtuoso {
+  background-image: url('https://images.g2crowd.com/uploads/product/image/social_landscape/social_landscape_4ae511d3debfabd80b281f20f10eaf38/openlink-software-virtuoso.png');
+  background-size: contain;
+  background-position: center;
+  background-color: white;
+  color: #434449;
+  font-size: 0;
+  height: 38px;
+}
+
+option {
+  font-size: 1rem;
+}
+
+select, option {
+  cursor: pointer !important;
+}

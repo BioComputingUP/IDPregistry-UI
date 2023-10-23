@@ -46,6 +46,7 @@ app.component.scss:1
 /usr/bin/sass:25:in `<main>'
 */
 body:before {
-  white-space: pre;
-  font-family: monospace;
-  content: "Error: File to import not found or unreadable: src/styles/theme.\A         on line 1 of app.component.scss\A \A 1: @import \"src/styles/theme\";\A 2: \A 3: :host {\A 4:   height: 100%;\A 5:   display: flex;\A 6:   flex-direction: column;"; }
+    white-space: pre;
+    font-family: monospace;
+    content: "Error: File to import not found or unreadable: src/styles/theme.\A         on line 1 of app.component.scss\A \A 1: @import \"src/styles/theme\";\A 2: \A 3: :host {\A 4:   height: 100%;\A 5:   display: flex;\A 6:   flex-direction: column;";
+}

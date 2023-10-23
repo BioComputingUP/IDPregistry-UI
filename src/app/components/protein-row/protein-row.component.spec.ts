@@ -8,7 +8,7 @@ describe('ProteinRowComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ProteinRowComponent]
+      declarations : [ProteinRowComponent],
     });
     fixture = TestBed.createComponent(ProteinRowComponent);
     component = fixture.componentInstance;

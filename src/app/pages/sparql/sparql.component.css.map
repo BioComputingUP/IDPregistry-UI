@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,aAAc;EACZ,eAAe,EAAE,IAAI",
+"sources": ["sparql.component.scss"],
+"names": [],
+"file": "sparql.component.css"
+}

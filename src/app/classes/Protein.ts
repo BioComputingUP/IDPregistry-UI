@@ -1,47 +1,122 @@
-class SequenceRange {
-  constructor(
-    public start: string,
-    public end: string,
-    public annotationName: string,
-    public annotationCode: string
-  ) {}
-}
+export class Term {
+  name: string;
+  code: string;
 
-export class ExternalSource {
-  constructor(
-    public name: string,
-    public sourceID: string,
-    public sequenceRanges: SequenceRange[]
-  ) {}
+  constructor(name: string, code: string) {
+    this.name = name;
+    this.code = code;
+  }
+
+  getUri(): string {
+    if (this.code === undefined) {
+      return '';
+    }
+    let origin = this.code.split(':')[0];
+
+    switch (origin) {
+      case 'GO':
+        return `http://purl.obolibrary.org/obo/${this.code.replace(':', '_')}`;
+      case 'IDPO':
+        return `https://disprot.org/idpo/${this.code}`;
+      default:
+        return '';
+    }
+  }
 }
 
 export class Protein {
+  uniprotUri: string;
+  organismName: string;
+  name: string;
+  taxonomyUri: string;
+  externalSources: ExternalSource[];
+
   constructor(
-    public sequenceID: string,
-    public organismName: string,
-    public name: string,
-    public sources: ExternalSource[]
-  ) {}
+    uniprotUri: string,
+    organismName: string,
+    name: string,
+    taxonomyUri: string,
+  ) {
+    this.uniprotUri = uniprotUri;
+    this.organismName = organismName;
+    this.name = name;
+    this.taxonomyUri = taxonomyUri;
+    this.externalSources = [];
+  }
 
-  static fromJSON(data: any): Protein {
-    const sequenceID = data.sequenceID.value;
-    const organismName = data.organismName.value;
-    const name = data.name.value;
-    const sourceID = data.sourceID.value;
-    const sourceName = data.source.value;
-    const start = data.start.value;
-    const end = data.end.value;
-    const annotationName = data.annotationName.value;
-    const annotationCode = data.annotationCode.value;
+  get uniprotId(): string {
+    return this.uniprotUri.split('/').pop()!;
+  }
 
-    const protein = new Protein(sequenceID, organismName, name, []);
-    let source = protein.sources.find((source) => source.sourceID === sourceID);
-    if (!source) {
-      source = new ExternalSource(sourceID, sourceName, []);
-      protein.sources.push(source);
+  get taxonomyNumber(): string {
+    return this.taxonomyUri.split('/').pop()!;
+  }
+
+  addExternalSource(sourceName: string, sourceId: string): void {
+    this.externalSources.push(new ExternalSource(sourceName, sourceId));
+  }
+}
+
+class ExternalSource {
+  sourceName: string;
+  sourceId: string;
+  annotations: AnnotationMap[];
+
+  constructor(sourceName: string, sourceId: string) {
+    this.sourceName = sourceName;
+    this.sourceId = sourceId;
+    this.annotations = [];
+  }
+
+  addAnnotation(
+    start: number,
+    end: number,
+    annotationName: string,
+    annotationCode: string,
+  ): void {
+    let annotation = this.annotations.find(
+      (anno) => anno.start === start && anno.end === end,
+    );
+    if (!annotation) {
+      annotation = new AnnotationMap(start, end);
+      this.annotations.push(annotation);
+      // Sort the annotations by start and end position
+      this.annotations.sort((a, b) => {
+        if (a.start === b.start) {
+          return a.end - b.end;
+        }
+        return a.start - b.start;
+      });
     }
-    source.sequenceRanges.push(new SequenceRange(start, end, annotationName, annotationCode));
+    annotation.addTerm(annotationName, annotationCode);
+  }
 
-    return protein;
+  getUri(): string {
+    switch (this.sourceName) {
+      case 'DisProt':
+        return `https://disprot.org/${this.sourceId}`;
+      case 'MobiDB':
+        return `https://mobidb.org/${this.sourceId}`;
+      case 'PED':
+        return `https://ped.uniroma2.it/${this.sourceId}`;
+      default:
+        return '';
+    }
+  }
+}
+
+class AnnotationMap {
+  start: number;
+  end: number;
+  terms: Term[];
+
+  constructor(start: number, end: number) {
+    this.start = start;
+    this.end = end;
+    this.terms = [];
+  }
+
+  addTerm(annotationName: string, annotationCode: string): void {
+    this.terms.push(new Term(annotationName, annotationCode));
   }
 }

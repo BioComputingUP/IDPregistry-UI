@@ -20,14 +20,17 @@
   footer {
     @extend .shadow-sm;
     flex: 0 0 auto;
-    background-color: #f2e5ff;
   }
 }
 
-nav {
-  background: linear-gradient(90deg, #a364e6, #6471ff);
+.nav-light {
+  background: linear-gradient(90deg, #ffe8db, #dbeeff);
+}
+
+.nav-dark {
+  background: linear-gradient(90deg, #342c28, #2f4150)
 }
 
 .to-white {
-  filter: brightness(100);
+  filter: invert(100%) brightness(100);
 }

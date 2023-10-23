@@ -1,0 +1,87 @@
+<div class="container pt-3 mb-3" style="max-width: 1600px">
+  <h2>SPARQL queries</h2>
+  <div class="row">
+    <div class="col-9">
+      <app-sparql-editor
+          (tsvData$)="onSparqlResult($event)"
+          [exampleQuery]="exampleQuery">
+      </app-sparql-editor>
+    </div>
+    <div class="col-3">
+      <div class="row flex-row gap-1">
+        <h3 class="mb-0">Examples</h3>
+        <ol>
+          <li>
+            <span
+                class="me-2">Count the number of UniProt proteins that are present in any of the three databases</span>
+            <a (click)="inputExample('Count UniProt proteins')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+          <li>
+            <span class="me-2">List the UniProt URIs present in any database</span>
+            <a (click)="inputExample('List UniProt proteins URIs')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+          <li>
+            <span class="me-2">For each UniProt protein show if it is present in a database</span>
+            <a (click)="inputExample('Is UniProt protein in database')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+          <li>
+            <span class="me-2">For each database count the number of unique UniProt proteins in it</span>
+            <a (click)="inputExample('Number of UniProt per database')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+
+        </ol>
+        <h5 class="mb-0">Advanced examples</h5>
+        <p class="text-small mb-0">
+          The following examples are advanced ones and some of them are the base for building the <b>IDP Registry.</b>
+          They will also contain federated queries using the <b>SPARQL</b> endpoint of <b>UniProt</b> to retrieve
+          additional information about the proteins.
+        </p>
+        <ol>
+          <li>
+            <span class="me-2">
+              Retrieve the annotations of the three different databases with a UniProt-centric view.
+              You can change the <b>OFFSET</b> and <b>LIMIT</b> most inner <b>SELECT</b> to retrieve annotations for different proteins.
+            </span>
+            <a (click)="inputExample('Registry')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+          <li>
+            <span class="me-2">
+              Same query as example 1 but it retrieves the data only for a given UniProt identifier.
+            </span>
+            <a (click)="inputExample('Registry for UniProt')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+          <li>
+            <span class="me-2">
+              Find the predicted disorder regions from MobiDB that are not entirely covered by a Disprot annotation, but
+              a PDB structure is available for the protein.
+            </span>
+            <a (click)="inputExample('Disorder in PDB')" class="link-primary no-underline" type="button">
+              Test it
+            </a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="(sparqlResults$| async) as results">
+    <ng-container *ngIf="results.length > 0">
+      <div class="row">
+        <h5>Results table</h5>
+        <app-sparql-results [sparqlResults]="(sparqlResults$ | async)!"></app-sparql-results>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+

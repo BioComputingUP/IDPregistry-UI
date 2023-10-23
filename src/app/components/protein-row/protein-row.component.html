@@ -12,42 +12,44 @@
       </a>
     </h6>
 
-    <table class="table bg-secondary" id="registry">
-      <thead class="bg-secondary">
-      <tr class="bg-secondary">
-        <th scope="col">Resource</th>
-        <th scope="col">Entity ID</th>
-        <th scope="col">Sequence range</th>
-        <th scope="col">Sequence annotation</th>
-      </tr>
-      </thead>
-      <tbody>
-      <ng-container *ngFor="let source of protein.externalSources">
-        <ng-container *ngFor="let annotation of source.annotations; index as i">
-          <ng-container *ngIf="i == 0">
-            <tr>
-              <td class="col-2">{{source.sourceName}}</td>
-              <td class="col-2">
-                <a [href]="source.getUri()" target="_blank">
-                  {{source.sourceId}}
-                </a>
-              </td>
-              <td class="col-2">{{annotation.start}} - {{annotation.end}}</td>
-              <ng-container *ngTemplateOutlet="termsBadge;context:{annotation: annotation}"></ng-container>
-            </tr>
-          </ng-container>
-          <ng-container *ngIf="i > 0">
-            <tr>
-              <td class="col-2"></td>
-              <td class="col-2"></td>
-              <td class="col-2">{{annotation.start}} - {{annotation.end}}</td>
-              <ng-container *ngTemplateOutlet="termsBadge;context:{annotation: annotation}"></ng-container>
-            </tr>
+    <div class="table-responsive">
+      <table class="table bg-secondary" id="registry">
+        <thead class="bg-secondary">
+        <tr class="bg-secondary">
+          <th scope="col">Resource</th>
+          <th scope="col">Entity ID</th>
+          <th scope="col">Sequence range</th>
+          <th scope="col">Sequence annotation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let source of protein.externalSources">
+          <ng-container *ngFor="let annotation of source.annotations; index as i">
+            <ng-container *ngIf="i == 0">
+              <tr>
+                <td class="col-2">{{source.sourceName}}</td>
+                <td class="col-2">
+                  <a [href]="source.getUri()" target="_blank">
+                    {{source.sourceId}}
+                  </a>
+                </td>
+                <td class="col-2">{{annotation.start}} - {{annotation.end}}</td>
+                <ng-container *ngTemplateOutlet="termsBadge;context:{annotation: annotation}"></ng-container>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="i > 0">
+              <tr>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2">{{annotation.start}} - {{annotation.end}}</td>
+                <ng-container *ngTemplateOutlet="termsBadge;context:{annotation: annotation}"></ng-container>
+              </tr>
+            </ng-container>
           </ng-container>
         </ng-container>
-      </ng-container>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

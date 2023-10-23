@@ -1,70 +1,70 @@
 <!-- Header -->
-<header>
-  <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+<ng-container *ngIf="(selectedTheme$|async) as currentTheme">
+  <header>
+    <nav [ngClass]="currentTheme == 'dark'? 'nav-dark': 'nav-light'" class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex gap-2" href="#">
+          <img [ngClass]="currentTheme == 'dark'? 'to-white': ''" alt="Logo" class="d-inline-block align-text-top" height="30"
+               src="assets/favicon.svg"
+               width="30">
+          IDP Registry Knowledge Graph
+        </a>
+        <button aria-controls="navbar-toggler" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler"
+                data-bs-target="#navbar-toggler" data-bs-toggle="collapse" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-toggler">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a aria-current="page" class="nav-link" data-bs-toggle="collapse"
+                 routerLink="/home">Home</a>
+            </li>
+            <li class="nav-item">
+              <a aria-current="page" class="nav-link" data-bs-toggle="collapse"
+                 routerLink="/sparql">SPARQL</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-0 me-0 mb-2 mb-lg-0">
+            <!-- Add item separator -->
+            <ng-container *ngTemplateOutlet="itemSeparator; context: { theme: currentTheme }"></ng-container>
+            <!-- Add theme selector -->
+            <ng-container *ngTemplateOutlet="themeSelector; context: { theme: currentTheme }"></ng-container>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Render content -->
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer [ngClass]="currentTheme == 'dark'? 'nav-dark': 'nav-light'" class="py-1">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img alt="Logo" class="d-inline-block align-text-top" height="30" width="30" src="assets/img_1.png" >
-        IDP Registry Knowledge Graph
-      </a>
-      <button aria-controls="navbar-toggler" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-              data-bs-target="#navbar-toggler" data-bs-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar-toggler">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link" data-bs-toggle="collapse"
-               routerLink="/home">Home</a>
-          </li>
-        </ul>
-        <!-- Search form -->
-<!--        <form (submit)="onSearchClick($event)" class="d-flex align-items-center m-0" role="search">-->
-<!--          <input [formControl]="search" aria-label="Search" class="form-control me-2" data-bs-theme="light" placeholder="Search"-->
-<!--                 type="search">-->
-<!--          <button class="btn btn-outline-light" type="submit">Search</button>-->
-<!--        </form>-->
-        <ul class="navbar-nav ms-0 me-0 mb-2 mb-lg-0">
-          <!-- Add item separator -->
-          <ng-container *ngTemplateOutlet="itemSeparator; context: { theme: selectedTheme$ | async }"></ng-container>
-          <!-- Add theme selector -->
-          <ng-container *ngTemplateOutlet="themeSelector; context: { theme: selectedTheme$ | async }"></ng-container>
-        </ul>
+      <!-- Footer scaffolding -->
+      <div class="d-flex flex-row flex-nowrap align-items-center w-100 h-auto">
+        <div class="me-2">
+          <img height="32" src="/assets/biocompup.jpg" width="auto">
+        </div>
+        <div class="ms-0 me-auto">
+          <p class="text-small m-0">BioComputing UP - Department of Biomedical Sciences - University of Padua, Italy -
+            2023</p>
+          <a class="text-small m-0">License & disclaimers</a>
+        </div>
+        <div class="ms-auto">
+          <img [class.to-white]="(selectedTheme$ | async) === 'dark'" alt="UNIPD logo" height="40"
+               src="assets/unipd.svg"
+               width="auto">
+        </div>
+        <div class="ms-1">
+          <img alt="EU logo" height="32" src="assets/eu.svg" width="auto">
+        </div>
       </div>
     </div>
-  </nav>
-</header>
-<!-- Content -->
-<main>
-  <!-- Render content -->
-  <router-outlet></router-outlet>
-</main>
-<!-- TODO Footer -->
-<footer class="py-1">
-  <div class="container-fluid">
-    <!-- Footer scaffolding -->
-    <div class="d-flex flex-row flex-nowrap align-items-center w-100 h-auto">
-      <!-- TODO BioCompUP image -->
-      <div class="me-2">
-        <!--        <img src="/assets/refract.svg" height="auto" width="auto">-->
-        <img height="32" src="/assets/biocompup.jpg" width="auto">
-      </div>
-      <!-- TODO BioCompUP reference -->
-      <div class="ms-0 me-auto">
-        <p class="text-small m-0">BioComputing UP - Department of Biomedical Sciences - University of Padua, Italy -
-          2023</p>
-        <a class="text-small m-0">License & disclaimers</a>
-      </div>
-      <!-- TODO UniPD reference -->
-      <div class="ms-auto">
-        <img alt="UNIPD logo" [class.to-white]="(selectedTheme$ | async) === 'dark'" height="40" src="assets/unipd.svg" width="auto">
-      </div>
-      <!-- TODO EU reference -->
-      <div class="ms-1">
-        <img alt="EU logo" height="32" src="assets/eu.svg" width="auto">
-      </div>
-    </div>
-  </div>
-</footer>
+  </footer>
+</ng-container>
 <!--Subscribe to theme update -->
 <ng-container *ngIf="themeUpdated$ | async"></ng-container>
 
@@ -110,7 +110,8 @@
 
 <ng-template #itemSeparator let-theme="theme">
   <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
-    <div [class.text-dark]="theme === 'light'" [class.text-white]="theme === 'dark'" class="vr d-none d-lg-flex h-100 mx-lg-2"></div>
+    <div [class.text-dark]="theme === 'light'" [class.text-white]="theme === 'dark'"
+         class="vr d-none d-lg-flex h-100 mx-lg-2"></div>
     <hr class="d-lg-none my-2 text-white-50">
   </li>
 </ng-template>

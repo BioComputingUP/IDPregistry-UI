@@ -1,0 +1,32 @@
+<div class="table-responsive">
+  <table class="table table-hover table-sm table-striped">
+    <ng-container *ngFor="let row of sparqlResults.slice(0, 1)">
+      <ng-container *ngTemplateOutlet="header; context: {$implicit : row }"></ng-container>
+    </ng-container>
+
+    <tbody class="table-group-divider">
+    <ng-container *ngFor="let row of sparqlResults.slice(1, sparqlResults.length)">
+      <ng-container *ngTemplateOutlet="body; context: {$implicit : row }"></ng-container>
+    </ng-container>
+    </tbody>
+  </table>
+</div>
+
+
+<ng-template #header let-row>
+  <thead>
+  <tr>
+    <th *ngFor="let col of row">
+      {{col}}
+    </th>
+  </tr>
+  </thead>
+</ng-template>
+
+<ng-template #body let-row>
+  <tr>
+    <td *ngFor="let col of row">
+      {{col}}
+    </td>
+  </tr>
+</ng-template>

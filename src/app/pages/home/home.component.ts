@@ -1,6 +1,12 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, concat, delay, map, merge, Observable, startWith, switchMap, tap } from "rxjs";
-import { parseTsvToProteins, Protein, RdfService } from "../../services/rdf.service";
+import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, switchMap, tap } from "rxjs";
+import { Protein } from '../../classes/Protein';
+import { Endpoint, parseCsvToProteins, RdfService } from "../../services/rdf.service";
+
+export interface Error {
+  message: string;
+  status: number;
+}
 
 @Component({
   selector : 'app-home',
@@ -11,27 +17,42 @@ export class HomeComponent implements OnInit {
   uniProtId = '';
 
   uniprotSearch$ = new BehaviorSubject<string>('');
-
-  numberOfProteins$: Observable<void> = this.uniprotSearch$.pipe(
-    switchMap((uniprotSearch: string) => this.queryNumberOfProteins(uniprotSearch)),
-    map((n: number) => this.totalItems$.next(n))
-  )
-
   currentPage$ = new BehaviorSubject(1);
   totalItems$ = new BehaviorSubject<number>(0);
+  numberOfProteins$: Observable<void> = this.uniprotSearch$.pipe(
+    switchMap((uniprotSearch: string) => this.queryNumberOfProteins(uniprotSearch)),
+    map((n: number) => this.totalItems$.next(n)),
+  )
   itemsPerPage$ = new BehaviorSubject<number>(5);
 
   rdfData$ = new BehaviorSubject<Protein[] | undefined>(undefined);
+
+  error$ = new BehaviorSubject<Error | undefined>(undefined);
 
   pagination$ = combineLatest([this.currentPage$, this.itemsPerPage$, this.uniprotSearch$]).pipe(
     tap(() => this.rdfData$.next(undefined)),
     switchMap(([page, itemsPerPage, uniprotSearch]) => this.queryRegistry(page, itemsPerPage, uniprotSearch)),
     tap((proteins: Protein[]) => this.rdfData$.next(proteins)),
+    catchError((err) => {
+      this.error$.next({
+        message : err.error,
+        status : err.status,
+      });
+      return [];
+    }),
   );
 
   constructor(
-    private rdfService: RdfService,
+    protected rdfService: RdfService,
   ) {
+  }
+
+  get currentPage() {
+    return this.currentPage$.value;
+  }
+
+  set currentPage(page: number) {
+    this.currentPage$.next(page);
   }
 
   getPageNumbers(): number[] {
@@ -54,60 +75,6 @@ export class HomeComponent implements OnInit {
     return Math.ceil(this.totalItems$.value / this.itemsPerPage$.value);
   }
 
-  searchRDFData() {
-    const sparqlQuery = `
-PREFIX schema: <https://schema.org/>
-
-SELECT ?graph (COUNT(DISTINCT ?s) AS ?Proteins) 
-WHERE {
-    GRAPH ?graph {
-        ?s a schema:Protein 
-    }
-} 
-GROUP BY ?graph`;
-    return this.rdfService.querySparqlToTSV(sparqlQuery);
-  }
-
-  numberOfUniProtProteins() {
-    const sparqlQuery = `
-PREFIX schema: <https://schema.org/>
-SELECT (COUNT(DISTINCT ?identifier) AS ?UniProt)
-WHERE {
-    ?protein a schema:Protein ;
-       schema:sameAs ?identifier .
-}`;
-    return this.rdfService.querySparqlToTSV(sparqlQuery);
-  }
-
-  proteinInGraph() {
-    const sparqlQuery = `
-PREFIX schema: <https://schema.org/>
-PREFIX idp: <https://idpcentral.org/registry/>
-SELECT ?UniProt (MAX(?mobidb) as ?MobiDB) (MAX(?ped) as ?PED) (MAX(?disprot) as ?Disprot)
-WHERE {
-    {
-        SELECT ?UniProt ?mobidb ?ped ?disprot
-        WHERE {
-            GRAPH ?g {
-                ?x schema:sameAs ?UniProt .
-            }
-            BIND((?g = idp:ped) AS ?ped)
-            BIND((?g = idp:disprot) AS ?disprot)
-            BIND((?g = idp:mobidb) AS ?mobidb)
-            {
-                SELECT DISTINCT ?UniProt
-                WHERE {
-                    ?protein a schema:Protein ;
-                             schema:sameAs ?UniProt .
-                }
-            }
-        }
-    }
-}
-GROUP BY ?UniProt`;
-    return this.rdfService.querySparqlToTSV(sparqlQuery);
-  }
-
   queryNumberOfProteins(identifier: string = ''): Observable<number> {
     const sparqlQuery = `
 PREFIX schema: <https://schema.org/>
@@ -118,10 +85,12 @@ WHERE {
         ?s a schema:Protein ;
            schema:sameAs ?sequenceID .
     }
-    ${identifier != '' ? 'FILTER(CONTAINS(REPLACE(STR(?sequenceID), "^.*/", ""),"' + identifier +'"))' : ''}
+    BIND(REPLACE(STR(?sequenceID), "^.*/", "") AS ?identifier)
+    FILTER(!CONTAINS(?identifier, "-"))
+    ${identifier != '' ? 'FILTER(CONTAINS(?identifier, "' + identifier + '"))' : ''}
 }`;
-    return this.rdfService.querySparqlToTSV(sparqlQuery).pipe(
-      map((tsvData: string) => Number(tsvData.split('\n')[1])),
+    return this.rdfService.makeSPARQLquery(sparqlQuery).pipe(
+      map(({execTime, csv}) => Number(csv.split('\n')[1])),
     );
   }
 
@@ -141,17 +110,17 @@ WHERE {
         graph idp:disprot {
             ?protein schema:sameAs ?sequenceID ;
                 schema:hasSequenceAnnotation ?annotationID ;
-                schema:name ?name ;
                 schema:identifier ?identifier ;
                 dc:title ?source .
+            OPTIONAL { ?protein schema:name ?name }
         }
     } UNION {
         graph idp:mobidb {
             ?protein schema:sameAs ?sequenceID ;
                 schema:hasSequenceAnnotation ?annotationID ;
-                schema:name ?name ;
                 schema:identifier ?identifier ;
                 dc:title ?source .
+            OPTIONAL { ?protein schema:name ?name }
         }
     } UNION {
         graph idp:ped {
@@ -161,8 +130,8 @@ WHERE {
                 schema:identifier ?identifier .
             ?e schema:itemListElement ?protein .
             ?protein schema:sameAs ?sequenceID ;
-                schema:name ?name ;
                 schema:hasSequenceAnnotation ?annotationID .
+            OPTIONAL { ?protein schema:name ?name }
         }
     }
     BIND(REPLACE(?identifier, "(^.+:)", "") AS ?sourceID)
@@ -182,7 +151,9 @@ WHERE {
                 WHERE {
                     ?protein a schema:Protein ;
                         schema:sameAs ?sequenceID .
-                    ${identifier != '' ? 'FILTER(CONTAINS(REPLACE(STR(?sequenceID), "^.*/", ""),"' + identifier +'"))' : ''}
+                    BIND(REPLACE(STR(?sequenceID), "^.*/", "") AS ?identifier)
+                    FILTER(!CONTAINS(?identifier, "-"))
+                    ${identifier != '' ? 'FILTER(CONTAINS(?identifier,"' + identifier + '"))' : ''}
                 }
                 ORDER BY ?sequenceID
                 OFFSET ${offset}
@@ -198,28 +169,29 @@ WHERE {
     }
 }`;
 
-    return this.rdfService.querySparqlToTSV(sparqlQuery).pipe(
-      map((tsvData: any) => parseTsvToProteins(tsvData)),
+    return this.rdfService.makeSPARQLquery(sparqlQuery).pipe(
+      map(({execTime, csv}) => parseCsvToProteins(csv)),
     );
   }
 
   ngOnInit(): void {
   }
 
-  get currentPage() {
-    return this.currentPage$.value;
-  }
-
-  set currentPage(page: number) {
-    this.currentPage$.next(page);
-  }
-
   onItemsPerPageChange(event: any) {
     const newValue = event.target.value; // Get the selected value from the event
     this.itemsPerPage$.next(+newValue); // Update the BehaviorSubject
+    this.currentPage$.next(1);
   }
 
   searchUniProt() {
+    this.error$.next(undefined);
+    this.totalItems$.next(0);
     this.uniprotSearch$.next(this.uniProtId);
+  }
+
+  onEndpointChange($event: Event) {
+    const newValue = ($event.target as HTMLSelectElement).value;
+    this.rdfService.changeSource(newValue as Endpoint);
+    this.searchUniProt();
   }
 }

@@ -1,0 +1,24 @@
+::ng-deep {
+  #codemirror {
+    .cm-content, .cm-gutter {
+      min-height: 250px;
+    }
+
+    .cm-gutters {
+      margin: 0;
+    }
+
+    .cm-scroller {
+      overflow: auto;
+    }
+
+    .cm-wrap {
+      border: 1px solid silver
+    }
+
+    .cm-content {
+      background-color: #8495bb12;
+    }
+  }
+}
+
