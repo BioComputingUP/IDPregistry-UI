@@ -1,0 +1,37 @@
+version: '3.5'
+name: idpcentral-registry
+
+services:
+  # Angular app
+  webapp:
+    container_name: angular-app
+    build: .
+    ports:
+      - "4200:4200"
+    restart: always
+
+  # Apache2 server (for serving the Angular app)
+  apache:
+    image: httpd:2.4.28
+    ports:
+      - "81:80"
+      - "443:443"
+    volumes:
+      - ./apache2/:/usr/local/apache2/sites-available/
+      - ./webroot:/usr/local/apache2/htdocs  # Map a volume for challenge files
+    environment:
+      SERVER_NAME: registry.idpcentral.org  # Set your domain name here
+    depends_on:
+      - webapp
+    restart: always
+
+  # Certbot for Let's Encrypt SSL
+  certbot:
+    image: certbot/certbot:v2.7.1
+    volumes:
+      - ./certbot_data:/etc/letsencrypt
+      - ./certbot_log:/var/log/letsencrypt
+      - ./webroot:/var/www/html  # Map the same volume for challenge files
+    command: certonly --webroot --webroot-path=/var/www/html --email your@email.com --agree-tos -d registry.idpcentral.org --non-interactive
+    depends_on:
+      - apache
