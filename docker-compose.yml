@@ -9,3 +9,5 @@ services:
     ports:
       - "8050:80"
     restart: always
+    volumes:
+      - ./apache2/httpd.conf:/usr/local/apache2/conf/httpd.conf
