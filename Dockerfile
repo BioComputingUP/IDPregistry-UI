@@ -20,4 +20,4 @@ RUN npm run build
 FROM httpd:2.4
 
 # Copy the Angular app's dist directory to the Apache web server
-COPY --from=build /app/dist/ /usr/local/apache2/htdocs/
+COPY --from=build /app/dist/idpcentral/ /usr/local/apache2/htdocs/
