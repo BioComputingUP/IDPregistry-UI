@@ -11,6 +11,7 @@ import { SparqlEditorComponent } from './components/sparql-editor/sparql-editor.
 import { SparqlResultsComponent } from './components/sparql-results/sparql-results.component';
 import { HomeComponent } from './pages/home/home.component';
 import { SparqlComponent } from './pages/sparql/sparql.component';
+import { EndpointSelectorComponent } from './components/endpoint-selector/endpoint-selector.component';
 
 @NgModule({
   declarations : [
@@ -20,6 +21,7 @@ import { SparqlComponent } from './pages/sparql/sparql.component';
     SparqlComponent,
     SparqlEditorComponent,
     SparqlResultsComponent,
+    EndpointSelectorComponent,
   ],
   imports : [
     HttpClientModule,

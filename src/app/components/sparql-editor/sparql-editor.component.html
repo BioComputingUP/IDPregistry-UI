@@ -1,23 +1,26 @@
 <div class="container">
   <div class="row gap-2">
     <div #sparqlEditor id="codemirror"></div>
-    <div class="row pe-0">
-      <div class="col-2 d-flex justify-content-start align-items-center">
+    <div class="row pe-0 gap-1">
+      <div class="col-3 d-flex justify-content-start align-items-center">
         <button (click)="copyCurl()" class="btn btn-sm btn-outline-secondary">
           Copy CuRL
         </button>
       </div>
-      <div class="col-10 d-flex justify-content-end align-items-center">
-      <span class="me-2">
-        Query time
-        <ng-container *ngIf="waitingResponse">
-          <span aria-hidden="true" class="spinner-border spinner-border-sm" role="status"></span>
-        </ng-container>
-        <ng-container *ngIf="!waitingResponse">
-          {{execTime$ | async}}
-        </ng-container>
-        ms
-      </span>
+      <div class="col-auto flex-grow-1" style="min-width: 217px">
+        <app-endpoint-selector class="align-self-start"></app-endpoint-selector>
+      </div>
+      <div class="col-5 d-flex justify-content-end align-items-center pe-0" style="min-width: 280px">
+        <span class="me-2">
+          Query time
+          <ng-container *ngIf="waitingResponse">
+            <span aria-hidden="true" class="spinner-border spinner-border-sm" role="status"></span>
+          </ng-container>
+          <ng-container *ngIf="!waitingResponse">
+            {{execTime$ | async}}
+          </ng-container>
+          ms
+        </span>
         <button (click)="submitQuery()"
                 class="btn btn-outline-primary">
           Submit query

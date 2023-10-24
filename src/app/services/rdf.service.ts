@@ -63,7 +63,7 @@ export class RdfService {
     // 'Virtuoso': 'https://kg.biocomputingup.it/virtuoso/sparql',
   };
 
-  private sparqlEndpoint = this.availableSources['Virtuoso']; // Replace with your actual GraphDB SPARQL endpoint
+  private sparqlEndpoint = this.availableSources['GraphDB']; // Replace with your actual GraphDB SPARQL endpoint
 
   constructor(private http: HttpClient) {
   }
@@ -73,9 +73,7 @@ export class RdfService {
   }
 
   querySparqlToCuRL(sparqlQuery: string): string {
-    // Url encode the query
-    sparqlQuery = encodeURIComponent(sparqlQuery);
-    return `curl -X GET -H "Accept: text/csv" -H "Content-Type: application/x-www-form-urlencoded" "${this.sparqlEndpoint}?query=${sparqlQuery}"`;
+    return `curl --get -H "Accept: text/csv" --data-urlencode "query=\n${sparqlQuery}\n" ${this.sparqlEndpoint}`;
   }
 
   makeSPARQLquery(sparqlQuery: string): Observable<{ execTime: number, csv: string }> {

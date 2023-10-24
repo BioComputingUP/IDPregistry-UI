@@ -1,5 +1,3 @@
-@import "src/styles/theme";
-
 :host {
   height: 100%;
   display: flex;
@@ -8,7 +6,6 @@
   //overflow: hidden;
 
   header {
-    @extend .shadow-sm;
     flex: 0 0 auto;
   }
 
@@ -18,7 +15,6 @@
   }
 
   footer {
-    @extend .shadow-sm;
     flex: 0 0 auto;
   }
 }

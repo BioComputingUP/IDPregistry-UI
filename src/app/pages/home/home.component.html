@@ -18,15 +18,7 @@
         </span>
     </div>
     <div class="col align-self-start">
-      <div class="d-flex align-items-center justify-content-end">
-        <span class="me-2" style="min-width: fit-content">Endpoint</span>
-        <select (change)="onEndpointChange($event)" [ngClass]="rdfService.currentSource == 'GraphDB' ? 'graphdb' : 'virtuoso'" class="form-select"
-                id="test" style="max-width: 88px">
-          <option value="GraphDB">GraphDB</option>
-          <option value="Virtuoso">Virtuoso</option>
-          <!-- Add more options as needed -->
-        </select>
-      </div>
+      <app-endpoint-selector (endpointChange$)="searchUniProt()"></app-endpoint-selector>
     </div>
     <div class="col align-self-start pe-0">
       <div class="d-flex align-items-center justify-content-end">
