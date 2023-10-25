@@ -4,13 +4,13 @@ FROM node:20.8.0 as build
 # Set the working directory
 WORKDIR /app
 
-RUN git clone https://github.com/BioComputingUP/IDPregistry-UI.git .
+RUN git clone --single-branch --branch dockerize https://github.com/BioComputingUP/IDPregistry-UI.git .
 
 # Install dependencies
-RUN npm install
+RUN npm install --loglevel=error
 
 # Build the Angular app for production
-RUN npm run build
+RUN npm run build --loglevel=error
 
 # Use the official Apache image as the production server
 FROM httpd:2.4
@@ -19,4 +19,6 @@ FROM httpd:2.4
 COPY --from=build /app/dist/idpcentral/ /usr/local/apache2/htdocs/
 
 # Copy the Apache configuration file to the Apache web server
-COPY docker/apache2/httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY --from=build /app/docker/apache2/httpd.conf /usr/local/apache2/conf/httpd.conf
+
+EXPOSE 80
