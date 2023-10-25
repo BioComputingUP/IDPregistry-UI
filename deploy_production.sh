@@ -1,5 +1,7 @@
 #!/usr/bin/zsh
 
+set -e
+
 # First we need to check if everything has been pushed to the GitHub repo
 echo "Checking if everything has been pushed to the GitHub repo"
 colR='\033[0;91m'
@@ -45,10 +47,14 @@ echo "Everything is up to date."
 echo "Changing docker context to ermes"
 docker context use ermes
 
+# Enter in the docker directory
+echo "Entering in the docker directory"
+cd docker
+
 # Now we can build the image on the production server
 echo "Building the image on ermes"
-docker build -t idpregistry-ui:1.0 docker/Dockerfile
+docker build -t idpregistry-ui:1.0 .
 
 # Now we start the container
 echo "Starting the container in detached mode"
-docker run -d -p 8050:80 idpregistry-ui:1.0
+docker run --name idpregistry-ui -d -p 8050:80 idpregistry-ui:1.0
