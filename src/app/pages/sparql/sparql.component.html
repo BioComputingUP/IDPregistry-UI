@@ -1,13 +1,13 @@
 <div class="container pt-3 mb-3" style="max-width: 1600px">
   <h2>SPARQL queries</h2>
   <div class="row">
-    <div class="col-9">
+    <div class="col-7">
       <app-sparql-editor
           (tsvData$)="onSparqlResult($event)"
           [exampleQuery]="exampleQuery">
       </app-sparql-editor>
     </div>
-    <div class="col-3">
+    <div class="col-5">
       <div class="row flex-row gap-1">
         <h3 class="mb-0">Examples</h3>
         <ol>

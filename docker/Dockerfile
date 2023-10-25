@@ -4,11 +4,7 @@ FROM node:20.8.0 as build
 # Set the working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-# Copy the entire project to the working directory
-COPY . .
+RUN git clone https://github.com/BioComputingUP/IDPregistry-UI.git .
 
 # Install dependencies
 RUN npm install
@@ -21,3 +17,6 @@ FROM httpd:2.4
 
 # Copy the Angular app's dist directory to the Apache web server
 COPY --from=build /app/dist/idpcentral/ /usr/local/apache2/htdocs/
+
+# Copy the Apache configuration file to the Apache web server
+COPY docker/apache2/httpd.conf /usr/local/apache2/conf/httpd.conf

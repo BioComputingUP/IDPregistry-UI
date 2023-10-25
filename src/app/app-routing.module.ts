@@ -6,7 +6,7 @@ import {SparqlComponent} from './pages/sparql/sparql.component';
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'sparql', component: SparqlComponent},
-  {path: '**', redirectTo: '/', component: HomeComponent}
+  {path: '**', redirectTo: '/'}
 ];
 
 @NgModule({
